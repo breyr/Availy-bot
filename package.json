@@ -1,0 +1,28 @@
+{
+  "name": "availy-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/breyr/Availy-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/breyr/Availy-bot/issues"
+  },
+  "homepage": "https://github.com/breyr/Availy-bot#readme",
+  "dependencies": {
+    "@slack/bolt": "^3.12.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.19"
+  }
+}
