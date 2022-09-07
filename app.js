@@ -258,7 +258,7 @@ app.action('confirm_click', async ({ body, ack, say }) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `_clicking cover shift will delete this message and send a confirmation message to the requester and emails ITSS_`,
+          text: `_clicking cover shift will delete this message and email ITSS_`,
         },
       },
     ],
