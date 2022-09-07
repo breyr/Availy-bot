@@ -1,4 +1,7 @@
-// TODO: For documentation we need to have a channel created in slack called 'availy-posts'
+/* TODO: 
+  1. For documentation we need to have a channel created in slack called 'availy-posts'
+  2. You need to wait a period of time after joining the channel before sending a request off form post to availy-posts
+*/
 const { App } = require('@slack/bolt');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
@@ -24,40 +27,45 @@ const app = new App({
 });
 
 // Clear All Command
+
 // delete all messages in dm from bot and in availy-posts, but that's jsut for testing
-app.command('/clearall', async ({ command, ack }) => {
-  await ack();
-  const channel = command.channel_id;
-  if (channel.channel_name === 'directmessage') {
-    let conversationHistory;
-    const result = await app.client.conversations.history({
-      channel: channel,
-    });
-    conversationHistory = result.messages;
-    conversationHistory.forEach((message) => {
-      // only delete the message if it is a bot message
-      if (message.hasOwnProperty('bot_id')) {
-        app.client.chat.delete({
-          token: process.env.SLACK_BOT_TOKEN,
-          channel: channel,
-          ts: message.ts,
-        });
-      }
-    });
-  } else {
-    // post a message only visible to user who called the command
-    app.client.chat.postEphemeral({
-      channel: command.channel_id,
-      user: command.user_id,
-      text: '*/clearall* can only be called in your direct message with Availy',
-    });
-  }
-});
+// app.command('/clearall', async ({ command, ack }) => {
+//   await ack();
+//   const channel = command.channel_id;
+//   if (command.channel_name == 'directmessage') {
+//     let conversationHistory;
+//     const result = await app.client.conversations.history({
+//       channel: channel,
+//     });
+//     conversationHistory = result.messages;
+//     conversationHistory.forEach((message) => {
+//       // only delete the message if it is a bot message
+//       if (message.hasOwnProperty('bot_id')) {
+//         app.client.chat.delete({
+//           token: process.env.SLACK_BOT_TOKEN,
+//           channel: channel,
+//           ts: message.ts,
+//         });
+//       }
+//     });
+//   } else {
+//     // post a message only visible to user who called the command
+//     app.client.chat.postEphemeral({
+//       channel: command.channel_id,
+//       user: command.user_id,
+//       text: '*/clearall* can only be called in your direct message with Availy',
+//     });
+//   }
+// });
 
 // Request Off Command
+
 let user_name = 'user';
 app.command('/requestoff', async ({ body, ack, say }) => {
   await ack();
+
+  // current date format
+  const d = new Date().toLocaleDateString().split('/');
 
   user_name = body.user_name;
   if (body.channel_name == 'directmessage') {
@@ -75,7 +83,8 @@ app.command('/requestoff', async ({ body, ack, say }) => {
           type: 'input',
           element: {
             type: 'datepicker',
-            initial_date: '2022-01-01',
+            // initial_date: '2022-01-09',
+            initial_date: `${d[2]}-${d[0]}-${d[1]}`,
             placeholder: {
               type: 'plain_text',
               text: 'Select a date',
@@ -170,7 +179,7 @@ app.action('time-start-action', async ({ body }) => {
   const startTimeHours = parseInt(
     selectedStartTime.substring(0, selectedStartTime.length - 3)
   );
-  amOrPmStart = startTimeHours >= 12 ? 'pm' : 'am';
+  const amOrPmStart = startTimeHours >= 12 ? 'pm' : 'am';
   let startTimeHoursConverted;
   if (startTimeHours == 12 || startTimeHours == 0o0) {
     // this is some octal literal stuff idk whats going on
@@ -192,7 +201,7 @@ app.action('time-end-action', async ({ body }) => {
   const endTimeHours = parseInt(
     selectedEndTime.substring(0, selectedEndTime.length - 3)
   );
-  amOrPmEnd = endTimeHours >= 12 ? 'pm' : 'am';
+  const amOrPmEnd = endTimeHours >= 12 ? 'pm' : 'am';
   let endTimeHoursConverted;
   if (endTimeHours == 12 || endTimeHours == 0o0) {
     // this is some octal literal stuff idk whats going on
@@ -205,10 +214,10 @@ app.action('time-end-action', async ({ body }) => {
 });
 
 // these actions have to occur or else confirm never sees the updated variable
-let date = '01/01/2000'; // defualt date
+let date = new Date().toLocaleDateString(); // defualt date is the current date
 app.action('datepicker-action', async ({ body }) => {
   // split selected date by '-'
-  split_date = body.actions[0].selected_date.split('-');
+  const split_date = body.actions[0].selected_date.split('-');
   date = split_date[1] + '/' + split_date[2] + '/' + split_date[0];
 });
 
@@ -225,7 +234,7 @@ app.action('confirm_click', async ({ body, ack, say }) => {
     })
   );
 
-  await say('_*request sent*_');
+  await say(`_*request sent* at ${new Date().toLocaleTimeString()}_`);
 
   app.client.chat.postMessage({
     token: process.env.SLACK_BOT_TOKEN,
@@ -299,7 +308,7 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   // send email
   var mailOptions = {
     from: process.env.EMAIL_USR,
-    to: 'breyr2021@gmail.com',
+    to: 'breyr2021@gmail.com', //TODO: change this email
     subject: `Shift Cover Alert - ${new Date().toLocaleTimeString()}`,
     html: `<h4>${person_covering} is covering ${user_name} on</h4>
            <h4>Date: ${date}</h4>
@@ -322,21 +331,3 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   await app.start(process.env.PORT || port);
   console.log(`⚡️Slack Bolt app is running on port ${port}`);
 })();
-
-// SEND AN INTRODUCTION TO THE USERS
-// const result = await app.client.users.list({
-//   token: process.env.SLACK_BOT_TOKEN,
-// });
-// users = result['members'];
-// users.forEach((user) => {
-//   // if the user isn't a bot, then message them with an introduction message
-//   // everytime the app starts this message will be sent
-//   if (!user['is_bot'] && user['id'] !== 'USLACKBOT') {
-//     console.log(user['id']);
-//     app.client.chat.postMessage({
-//       token: process.env.SLACK_BOT_TOKEN,
-//       channel: user['id'],
-//       text: 'hello from Availy!',
-//     });
-//   }
-// });
