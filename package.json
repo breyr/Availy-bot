@@ -22,10 +22,10 @@
   "dependencies": {
     "@emailjs/browser": "^3.7.0",
     "@slack/bolt": "^3.12.1",
-    "nodemailer": "^6.7.8"
+    "nodemailer": "^6.7.8",
+    "dotenv": "^16.0.1"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
     "nodemon": "^2.0.19",
     "serverless-offline": "^10.0.0"
   }
