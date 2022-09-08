@@ -21,9 +21,6 @@ const transporter = nodemailer.createTransport({
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
-  socketMode: true,
-  appToken: process.env.SLACK_APP_TOKEN,
-  port: process.env.PORT || 3000,
 });
 
 // Clear All Command
@@ -327,6 +324,6 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
 
 (async () => {
   // Start your app
-  await app.start();
+  await app.start(process.env.PORT || 3000);
   console.log(`⚡️Slack Bolt app is running`);
 })();
