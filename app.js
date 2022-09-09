@@ -231,7 +231,11 @@ app.action('confirm_click', async ({ body, ack, say }) => {
     })
   );
 
-  await say(`_*request sent* at ${new Date().toLocaleTimeString()}_`);
+  await say(
+    `_*request sent* at ${new Date().toLocaleTimeString('en-US', {
+      timeZone: 'America/New_York',
+    })}_`
+  );
 
   app.client.chat.postMessage({
     token: process.env.SLACK_BOT_TOKEN,
