@@ -306,7 +306,10 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   var mailOptions = {
     from: process.env.EMAIL_USR,
     to: 'breyr2021@gmail.com', //TODO: change this email
-    subject: `Shift Cover Alert - ${new Date().toLocaleTimeString()}`,
+    // FIXME: this time is incorrcet
+    subject: `Shift Cover Alert - ${new Date().toLocaleTimeString('en-US', {
+      timeZone: 'America/New_York',
+    })}`,
     html: `<h4>${person_covering} is covering ${user_name} on</h4>
            <h4>Date: ${date}</h4>
            <h4>Time: ${startTime} - ${endTime}</h4>`,
