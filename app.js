@@ -55,18 +55,6 @@ const app = new App({
 //   }
 // });
 
-// get list of admins
-const users = app.client.users.list({
-  token: process.env.SLACK_BOT_TOKEN,
-});
-console.log(users);
-
-// Register email command
-let email = []; // may be one or more email addresses
-app.command('/setemail', async ({ body, ack, say }) => {
-  console.log(body);
-});
-
 // Request Off Command
 // change to setemail
 let user_name = 'user';
@@ -321,8 +309,7 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   // send email
   var mailOptions = {
     from: process.env.EMAIL_USR,
-    to: 'breyr2021@gmail.com', //TODO: change this email
-    // FIXME: this time is incorrcet
+    to: process.env.SEND_TO_EMAIL,
     subject: `Shift Cover Alert - ${new Date().toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
     })}`,
