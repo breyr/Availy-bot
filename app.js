@@ -56,7 +56,7 @@ const app = new App({
 // });
 
 // get list of admins
-const admins = await app.client.admin.users.list({
+const admins = app.client.admin.users.list({
   token: process.env.SLACK_BOT_TOKEN,
 });
 console.log(admins);
