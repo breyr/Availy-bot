@@ -55,14 +55,20 @@ const app = new App({
 //   }
 // });
 
+// get list of admins
+const admins = await app.client.admin.users.list({
+  token: process.env.SLACK_BOT_TOKEN,
+});
+console.log(admins);
+
 // Register email command
 let email = []; // may be one or more email addresses
-app.command('/registeremail', async ({ body, ack, say }) => {
+app.command('/setemail', async ({ body, ack, say }) => {
   console.log(body);
 });
 
 // Request Off Command
-
+// change to setemail
 let user_name = 'user';
 app.command('/requestoff', async ({ body, ack, say }) => {
   await ack();
