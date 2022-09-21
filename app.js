@@ -56,10 +56,10 @@ const app = new App({
 // });
 
 // get list of admins
-const admins = app.client.admin.users.list({
+const users = app.client.users.list({
   token: process.env.SLACK_BOT_TOKEN,
 });
-console.log(admins);
+console.log(users);
 
 // Register email command
 let email = []; // may be one or more email addresses
