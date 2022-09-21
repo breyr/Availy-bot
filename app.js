@@ -55,6 +55,12 @@ const app = new App({
 //   }
 // });
 
+// Register email command
+let email = []; // may be one or more email addresses
+app.command('/registeremail', async ({ body, ack, say }) => {
+  console.log(body);
+});
+
 // Request Off Command
 
 let user_name = 'user';
