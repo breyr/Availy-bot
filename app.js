@@ -24,7 +24,7 @@ const app = new App({
 });
 
 const channels = app.client.channels.list();
-print(channels);
+console.log(channels);
 
 // Clear All Command
 
