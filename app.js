@@ -23,9 +23,6 @@ const app = new App({
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
 
-const channels = app.client.channels.list();
-console.log(channels);
-
 // Clear All Command
 
 // delete all messages in dm from bot and in availy-posts, but that's jsut for testing
