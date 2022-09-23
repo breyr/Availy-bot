@@ -8,9 +8,6 @@ require('dotenv').config();
 
 const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
-const channels = app.client.channels.list();
-print(channels);
-
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -25,6 +22,9 @@ const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
 });
+
+const channels = app.client.channels.list();
+print(channels);
 
 // Clear All Command
 
