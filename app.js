@@ -66,6 +66,7 @@ app.command('/requestoff', async ({ body, ack, say }) => {
 
   user_name = body.user_name;
   if (body.channel_name == 'directmessage') {
+    console.log(body.channel_name);
     await say({
       blocks: [
         {
