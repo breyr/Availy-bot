@@ -59,7 +59,7 @@ const app = new App({
 // change to setemail
 let user_name = 'user';
 app.command('/requestoff', async ({ body, ack, say }) => {
-  await ack();
+  await ack(console.log(body));
 
   // current date format
   const d = new Date().toLocaleDateString().split('/');
