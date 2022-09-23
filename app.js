@@ -8,6 +8,9 @@ require('dotenv').config();
 
 const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
+const channels = app.client.channels.list();
+print(channels);
+
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
