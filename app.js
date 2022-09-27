@@ -329,7 +329,7 @@ app.action('cancel_click', async ({ ack, body, context }) => {
   ack();
 
   try {
-    const result = await channel.chat.delete({
+    const result = await app.client.chat.delete({
       token: context.botToken,
       channel: body.channel.id,
       ts: body.message.ts,
@@ -340,22 +340,32 @@ app.action('cancel_click', async ({ ack, body, context }) => {
   }
 });
 
-app.action('cover_shift_click', async ({ body, ack, say }) => {
-  const messageID = body.message.ts;
-  const channel = body.channel.id;
+app.action('cover_shift_click', async ({ ack, body, context }) => {
   const person_covering = body.user.name;
 
-  await ack(
-    app.client.chat.delete({
-      token: process.env.SLACK_BOT_TOKEN,
-      channel: channel,
-      ts: messageID,
-    })
-  );
+  await ack();
 
-  await say(
-    `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`
-  );
+  try {
+    // update message
+    const result = await app.client.chat.update({
+      token: context.botToken,
+      // ts of message to update
+      ts: body.message.ts,
+      channel: body.channel.id,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+          },
+        },
+      ],
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 
   // send email
   var mailOptions = {
@@ -377,74 +387,6 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
       console.log('Email sent: ' + info.response);
     }
   });
-});
-
-// Listen for a slash command invocation
-app.command('/slash-demo-yt', async ({ ack, payload, context }) => {
-  // Acknowledge the command request
-  ack();
-
-  try {
-    const result = await app.client.chat.postMessage({
-      token: context.botToken,
-      // Channel to send message to
-      channel: payload.channel_id,
-      // Include a button in the message (or whatever blocks you want!)
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: 'Go ahead. Click it.',
-          },
-          accessory: {
-            type: 'button',
-            text: {
-              type: 'plain_text',
-              text: 'Click me!',
-            },
-            action_id: 'button_abc',
-          },
-        },
-      ],
-      // Text in the notification
-      text: 'Message from Test App',
-    });
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
-});
-
-// Listen for a button invocation with action_id `button_abc`
-// You must set up a Request URL under Interactive Components on your app configuration page
-app.action('button_abc', async ({ ack, body, context }) => {
-  // Acknowledge the button request
-  ack();
-
-  try {
-    // Update the message
-    const result = await app.client.chat.update({
-      token: context.botToken,
-      // ts of message to update
-      ts: body.message.ts,
-      // Channel of message
-      channel: body.channel.id,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: '*The button was clicked!*',
-          },
-        },
-      ],
-      text: 'Message from Test App',
-    });
-    console.log(result);
-  } catch (error) {
-    console.error(error);
-  }
 });
 
 (async () => {
