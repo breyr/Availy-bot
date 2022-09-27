@@ -132,97 +132,117 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
         // Channel to send message to
         channel: payload.channel_id,
         // Include a button in the message (or whatever blocks you want!)
+        // blocks: [
+        //   {
+        //     type: 'header',
+        //     text: {
+        //       type: 'plain_text',
+        //       text: 'Please Select Your Request',
+        //       emoji: true,
+        //     },
+        //   },
+        //   {
+        //     type: 'input',
+        //     element: {
+        //       type: 'datepicker',
+        //       initial_date: `${d[2]}-${d[0]}-${d[1]}`,
+        //       placeholder: {
+        //         type: 'plain_text',
+        //         text: 'Select a date',
+        //         emoji: true,
+        //       },
+        //       action_id: 'datepicker-action',
+        //     },
+        //     label: {
+        //       type: 'plain_text',
+        //       text: 'Shift Date',
+        //       emoji: true,
+        //     },
+        //   },
+        //   {
+        //     type: 'input',
+        //     element: {
+        //       type: 'timepicker',
+        //       initial_time: '00:00',
+        //       placeholder: {
+        //         type: 'plain_text',
+        //         text: 'Select time',
+        //         emoji: true,
+        //       },
+        //       action_id: 'time-start-action',
+        //     },
+        //     label: {
+        //       type: 'plain_text',
+        //       text: 'Start Shift Time',
+        //       emoji: true,
+        //     },
+        //   },
+        //   {
+        //     type: 'input',
+        //     element: {
+        //       type: 'timepicker',
+        //       initial_time: '00:00',
+        //       placeholder: {
+        //         type: 'plain_text',
+        //         text: 'Select time',
+        //         emoji: true,
+        //       },
+        //       action_id: 'time-end-action',
+        //     },
+        //     label: {
+        //       type: 'plain_text',
+        //       text: 'End Shift Time',
+        //       emoji: true,
+        //     },
+        //   },
+        //   {
+        //     type: 'actions',
+        //     elements: [
+        //       {
+        //         type: 'button',
+        //         text: {
+        //           type: 'plain_text',
+        //           emoji: true,
+        //           text: 'Confirm',
+        //         },
+        //         style: 'primary',
+        //         action_id: 'confirm_click',
+        //       },
+        //       {
+        //         type: 'button',
+        //         text: {
+        //           type: 'plain_text',
+        //           emoji: true,
+        //           text: 'Cancel',
+        //         },
+        //         style: 'danger',
+        //         action_id: 'cancel_click',
+        //       },
+        //     ],
+        //   },
+        // ],
+        // text: 'Please select your request for time off.',
         blocks: [
           {
-            type: 'header',
+            type: 'section',
             text: {
-              type: 'plain_text',
-              text: 'Please Select Your Request',
-              emoji: true,
+              type: 'mrkdwn',
+              text: 'Go ahead. Click it.',
             },
-          },
-          {
-            type: 'input',
-            element: {
-              type: 'datepicker',
-              initial_date: `${d[2]}-${d[0]}-${d[1]}`,
-              placeholder: {
+            accessory: {
+              type: 'button',
+              text: {
                 type: 'plain_text',
-                text: 'Select a date',
-                emoji: true,
+                text: 'Click me!',
               },
-              action_id: 'datepicker-action',
+              action_id: 'button_abc',
             },
-            label: {
-              type: 'plain_text',
-              text: 'Shift Date',
-              emoji: true,
-            },
-          },
-          {
-            type: 'input',
-            element: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
-              },
-              action_id: 'time-start-action',
-            },
-            label: {
-              type: 'plain_text',
-              text: 'Start Shift Time',
-              emoji: true,
-            },
-          },
-          {
-            type: 'input',
-            element: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
-              },
-              action_id: 'time-end-action',
-            },
-            label: {
-              type: 'plain_text',
-              text: 'End Shift Time',
-              emoji: true,
-            },
-          },
-          {
-            type: 'actions',
-            elements: [
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  emoji: true,
-                  text: 'Confirm',
-                },
-                style: 'primary',
-                action_id: 'confirm_click',
-              },
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  emoji: true,
-                  text: 'Cancel',
-                },
-                style: 'danger',
-                action_id: 'cancel_click',
-              },
-            ],
           },
         ],
-        text: 'Please select your request for time off.',
+        // Text in the notification
+        text: 'Message from Test App',
       });
+      console.log(result);
     } catch (error) {
       console.log(error);
     }
