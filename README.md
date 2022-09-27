@@ -26,6 +26,6 @@ Thank you to all those who support me in my devlopment of Availy!
 
 - Testing: [Adam Spera](https://github.com/AdamSpera), Buzz Lombardi
 
-##### \_\_\_\_\_\_\_\_\_\_\_\_
+##### ___
 
 ##### - Brey Rivera
