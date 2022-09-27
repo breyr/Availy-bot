@@ -111,11 +111,14 @@ const app = new App({
 // Request Off Command
 // change to setemail
 let user_name = 'user';
-app.command('/requestoff', async ({ body, ack, say }) => {
+app.command('/requestoff', async ({ ack, payload, context }) => {
   await ack();
 
   // current date format
   const d = new Date().toLocaleDateString().split('/');
+
+  console.log(payload);
+  console.log(context);
 
   user_name = body.user_name;
   if (body.channel_name == 'directmessage') {
