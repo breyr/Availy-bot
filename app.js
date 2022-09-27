@@ -192,6 +192,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
     // post a message only visible to user who called the command
     try {
       const result = await app.client.chat.postEphemeral({
+        toke: context.botToken,
         channel: payload.channel_id,
         user: payload.user_id,
         text: '*/requestoff* can only be called in your direct message with Availy',
