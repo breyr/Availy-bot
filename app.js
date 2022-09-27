@@ -31,7 +31,7 @@ const app = new App({
     'commands',
     'groups:history',
     'im:history',
-    'mpin:history',
+    'mpim:history',
     'mpim:write',
     'users:read',
   ],
