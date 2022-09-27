@@ -81,6 +81,12 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
 
   user = payload.user_name;
   if (payload.channel_name === 'directmessage') {
+    const d = new Date()
+      .toLocaleDateString('en-US', {
+        timeZone: 'America/New_York',
+      })
+      .split('/');
+
     try {
       const result = await app.client.chat.postMessage({
         token: context.botToken,
