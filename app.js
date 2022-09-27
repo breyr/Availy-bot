@@ -2,8 +2,11 @@
   1. For documentation we need to have a channel created in slack called 'availy-posts'
   2. You need to wait a period of time after joining the channel before sending a request off form post to availy-posts
 */
-const { App } = require('@slack/bolt');
-const { FileInstallationStore } = require('@slack/oauth');
+const { App, LogLevel } = require('@slack/bolt');
+const orgAuth = require('./database/auth/store_user_org_install');
+const workspaceAuth = require('./database/auth/store_user_workspace_install');
+const db = require('./database/db');
+const dbQuery = require('./database/find_user');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
@@ -20,6 +23,7 @@ const transporter = nodemailer.createTransport({
 
 // initialize app with bot token and signing secret
 const app = new App({
+  logLevel: LogLevel.DEBUG,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
   clientId: process.env.SLACK_CLIENT_ID,
   clientSecret: process.env.SLACK_CLIENT_SECRET,
@@ -40,7 +44,39 @@ const app = new App({
     'mpim:write',
     'users:read',
   ],
-  installationStore: new FileInstallationStore(),
+  installerOptions: {
+    stateVerification: false,
+  },
+  installationStore: {
+    storeInstallation: async (installation) => {
+      console.log('installation: ' + installation);
+      console.log(installation);
+      if (
+        installation.isEnterpriseInstall &&
+        installation.enterprise !== undefined
+      ) {
+        return orgAuth.saveUserOrgInstall(installation);
+      }
+      if (installation.team !== undefined) {
+        return workspaceAuth.saveUserWorkspaceInstall(installation);
+      }
+      throw new Error('Failed saving installation data to installationStore');
+    },
+    fetchInstallation: async (installQuery) => {
+      console.log('installQuery: ' + installQuery);
+      console.log(installQuery);
+      if (
+        installQuery.isEnterpriseInstall &&
+        installQuery.enterpriseId !== undefined
+      ) {
+        return dbQuery.findUser(installQuery.enterpriseId);
+      }
+      if (installQuery.teamId !== undefined) {
+        return dbQuery.findUser(installQuery.teamId);
+      }
+      throw new Error('Failed fetching installation');
+    },
+  },
 });
 
 // Clear All Command
@@ -352,4 +388,6 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log(`⚡️Slack Bolt app is running`);
+  db.connect();
+  console.log('DB is connected.');
 })();
