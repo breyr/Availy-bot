@@ -1,16 +1,9 @@
-/* TODO: 
-  1. For documentation we need to have a channel created in slack called 'availy-posts'
-  2. You need to wait a period of time after joining the channel before sending a request off form post to availy-posts
-*/
 const { App, LogLevel } = require('@slack/bolt');
 const orgAuth = require('./database/auth/store_user_org_install');
 const workspaceAuth = require('./database/auth/store_user_workspace_install');
 const db = require('./database/db');
 const dbQuery = require('./database/find_user');
 const nodemailer = require('nodemailer');
-const {
-  buildBodyParserMiddleware,
-} = require('@slack/bolt/dist/receivers/ExpressReceiver');
 require('dotenv').config();
 
 const AVAILY_POSTS_CHANNEL = 'availy-posts';
@@ -79,47 +72,12 @@ const app = new App({
   },
 });
 
-// Clear All Command
-
-// delete all messages in dm from bot and in availy-posts, but that's jsut for testing
-// app.command('/clearall', async ({ command, ack }) => {
-//   await ack();
-//   const channel = command.channel_id;
-//   if (command.channel_name == 'directmessage') {
-//     let conversationHistory;
-//     const result = await app.client.conversations.history({
-//       channel: channel,
-//     });
-//     conversationHistory = result.messages;
-//     conversationHistory.forEach((message) => {
-//       // only delete the message if it is a bot message
-//       if (message.hasOwnProperty('bot_id')) {
-//         app.client.chat.delete({
-//           token: process.env.SLACK_BOT_TOKEN,
-//           channel: channel,
-//           ts: message.ts,
-//         });
-//       }
-//     });
-//   } else {
-//     // post a message only visible to user who called the command
-//     app.client.chat.postEphemeral({
-//       channel: command.channel_id,
-//       user: command.user_id,
-//       text: '*/clearall* can only be called in your direct message with Availy',
-//     });
-//   }
-// });
-
 // Request Off Command
 // change to setemail
 let user_name = 'user';
 app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
-
-  // current date format
-  const d = new Date().toLocaleDateString().split('/');
 
   console.log('Payload: \n' + payload);
   console.log('Context: \n' + context);
@@ -132,115 +90,96 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
         // Channel to send message to
         channel: payload.channel_id,
         // Include a button in the message (or whatever blocks you want!)
-        // blocks: [
-        //   {
-        //     type: 'header',
-        //     text: {
-        //       type: 'plain_text',
-        //       text: 'Please Select Your Request',
-        //       emoji: true,
-        //     },
-        //   },
-        //   {
-        //     type: 'input',
-        //     element: {
-        //       type: 'datepicker',
-        //       initial_date: `${d[2]}-${d[0]}-${d[1]}`,
-        //       placeholder: {
-        //         type: 'plain_text',
-        //         text: 'Select a date',
-        //         emoji: true,
-        //       },
-        //       action_id: 'datepicker-action',
-        //     },
-        //     label: {
-        //       type: 'plain_text',
-        //       text: 'Shift Date',
-        //       emoji: true,
-        //     },
-        //   },
-        //   {
-        //     type: 'input',
-        //     element: {
-        //       type: 'timepicker',
-        //       initial_time: '00:00',
-        //       placeholder: {
-        //         type: 'plain_text',
-        //         text: 'Select time',
-        //         emoji: true,
-        //       },
-        //       action_id: 'time-start-action',
-        //     },
-        //     label: {
-        //       type: 'plain_text',
-        //       text: 'Start Shift Time',
-        //       emoji: true,
-        //     },
-        //   },
-        //   {
-        //     type: 'input',
-        //     element: {
-        //       type: 'timepicker',
-        //       initial_time: '00:00',
-        //       placeholder: {
-        //         type: 'plain_text',
-        //         text: 'Select time',
-        //         emoji: true,
-        //       },
-        //       action_id: 'time-end-action',
-        //     },
-        //     label: {
-        //       type: 'plain_text',
-        //       text: 'End Shift Time',
-        //       emoji: true,
-        //     },
-        //   },
-        //   {
-        //     type: 'actions',
-        //     elements: [
-        //       {
-        //         type: 'button',
-        //         text: {
-        //           type: 'plain_text',
-        //           emoji: true,
-        //           text: 'Confirm',
-        //         },
-        //         style: 'primary',
-        //         action_id: 'confirm_click',
-        //       },
-        //       {
-        //         type: 'button',
-        //         text: {
-        //           type: 'plain_text',
-        //           emoji: true,
-        //           text: 'Cancel',
-        //         },
-        //         style: 'danger',
-        //         action_id: 'cancel_click',
-        //       },
-        //     ],
-        //   },
-        // ],
-        // text: 'Please select your request for time off.',
         blocks: [
           {
-            type: 'section',
+            type: 'header',
             text: {
-              type: 'mrkdwn',
-              text: 'Go ahead. Click it.',
-            },
-            accessory: {
-              type: 'button',
-              text: {
-                type: 'plain_text',
-                text: 'Click me!',
-              },
-              action_id: 'button_abc',
+              type: 'plain_text',
+              text: 'Please Select Your Request',
+              emoji: true,
             },
           },
+          {
+            type: 'input',
+            element: {
+              type: 'datepicker',
+              initial_date: `${d[2]}-${d[0]}-${d[1]}`,
+              placeholder: {
+                type: 'plain_text',
+                text: 'Select a date',
+                emoji: true,
+              },
+              action_id: 'datepicker-action',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'Shift Date',
+              emoji: true,
+            },
+          },
+          {
+            type: 'input',
+            element: {
+              type: 'timepicker',
+              initial_time: '00:00',
+              placeholder: {
+                type: 'plain_text',
+                text: 'Select time',
+                emoji: true,
+              },
+              action_id: 'time-start-action',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'Start Shift Time',
+              emoji: true,
+            },
+          },
+          {
+            type: 'input',
+            element: {
+              type: 'timepicker',
+              initial_time: '00:00',
+              placeholder: {
+                type: 'plain_text',
+                text: 'Select time',
+                emoji: true,
+              },
+              action_id: 'time-end-action',
+            },
+            label: {
+              type: 'plain_text',
+              text: 'End Shift Time',
+              emoji: true,
+            },
+          },
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'button',
+                text: {
+                  type: 'plain_text',
+                  emoji: true,
+                  text: 'Confirm',
+                },
+                style: 'primary',
+                action_id: 'confirm_click',
+              },
+              {
+                type: 'button',
+                text: {
+                  type: 'plain_text',
+                  emoji: true,
+                  text: 'Cancel',
+                },
+                style: 'danger',
+                action_id: 'cancel_click',
+              },
+            ],
+          },
         ],
-        // Text in the notification
-        text: 'Message from Test App',
+        text: 'Please select your request for time off.',
       });
       console.log(result);
     } catch (error) {
@@ -339,24 +278,10 @@ app.action('confirm_click', async ({ ack, body, context }) => {
     console.log(error);
   }
 
-  // await ack(
-  //   app.client.chat.delete({
-  //     token: process.env.SLACK_BOT_TOKEN,
-  //     channel: channel,
-  //     ts: messageID,
-  //   })
-  // );
-
-  // await say(
-  //   `_*request sent* at ${new Date().toLocaleTimeString('en-US', {
-  //     timeZone: 'America/New_York',
-  //   })}_`
-  // );
-
   try {
     const result = await app.client.chat.postMessage({
-      token: process.env.SLACK_BOT_TOKEN,
-      channel: AVAILY_POSTS_CHANNEL, // this sucks because it is hardcoded, but has to be that way
+      token: context.botToken,
+      channel: AVAILY_POSTS_CHANNEL,
       blocks: [
         {
           type: 'section',
@@ -389,7 +314,7 @@ app.action('confirm_click', async ({ ack, body, context }) => {
           },
         },
       ],
-      text: 'new shift needed coverage posted',
+      text: 'new shift needing coverage posted',
     });
     console.log(result);
   } catch (error) {
@@ -398,16 +323,6 @@ app.action('confirm_click', async ({ ack, body, context }) => {
 });
 
 app.action('cancel_click', async ({ ack, body, context }) => {
-  // const messageID = body.message.ts;
-  // const channel = body.channel.id;
-  // await ack(
-  //   app.client.chat.delete({
-  //     token: process.env.SLACK_BOT_TOKEN,
-  //     channel: channel,
-  //     ts: messageID,
-  //   })
-  // );
-
   ack();
 
   try {
