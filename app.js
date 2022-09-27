@@ -74,16 +74,13 @@ const app = new App({
 
 // Request Off Command
 // change to setemail
-let user_name = 'user';
+let user = 'user';
 app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
 
-  console.log('Payload: \n' + payload);
-  console.log('Context: \n' + context);
-
-  user_name = payload.user_name;
-  if (payload.channel_name == 'directmessage') {
+  user = payload.user_name;
+  if (payload.channel_name === 'directmessage') {
     try {
       const result = await app.client.chat.postMessage({
         token: context.botToken,
@@ -287,7 +284,7 @@ app.action('confirm_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${user_name}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+            text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
           },
         },
         {
@@ -351,7 +348,7 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
   );
 
   await say(
-    `<@${person_covering}> is covering <@${user_name}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`
+    `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`
   );
 
   // send email
@@ -361,7 +358,7 @@ app.action('cover_shift_click', async ({ body, ack, say }) => {
     subject: `Shift Cover Alert - ${new Date().toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
     })}`,
-    html: `<h4>${person_covering} is covering ${user_name} on</h4>
+    html: `<h4>${person_covering} is covering ${user} on</h4>
            <h4>Date: ${date}</h4>
            <h4>Time: ${startTime} - ${endTime}</h4>`,
   };
