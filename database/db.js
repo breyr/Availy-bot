@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+//mongodb+srv://breyr:<password>@cluster0.opsxuey.mongodb.net/test
+
 const uri =
   'mongodb+srv://' +
   process.env.DB_USERNAME +
   ':' +
   process.env.DB_PASSWORD +
-  '@cluster0.yvswg.mongodb.net/' +
+  '@cluster0.opsxuey.mongodb.net/test' +
   process.env.DB_NAME +
   '?retryWrites=true&w=majority';
 
