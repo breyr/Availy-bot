@@ -26,7 +26,7 @@ const app = new App({
   stateSecret: 'my-state-secret',
   scopes: [
     'channels:history',
-    'channles:manage',
+    'channels:manage',
     'channels:read',
     'chat:write',
     'commands',
