@@ -3,6 +3,7 @@
   2. You need to wait a period of time after joining the channel before sending a request off form post to availy-posts
 */
 const { App } = require('@slack/bolt');
+const { FileInstallationStore } = require('@slack/oauth');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
@@ -19,8 +20,22 @@ const transporter = nodemailer.createTransport({
 
 // initialize app with bot token and signing secret
 const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
   signingSecret: process.env.SLACK_SIGNING_SECRET,
+  clientId: process.env.SLACK_CLIENT_ID,
+  clientSecret: process.env.SLACK_CLIENT_SECRET,
+  stateSecret: 'my-state-secret',
+  scopes: [
+    'channels:history',
+    'channels:read',
+    'chat:write',
+    'commands',
+    'groups:history',
+    'im:history',
+    'mpin:history',
+    'mpim:write',
+    'users:read',
+  ],
+  installationStore: new FileInstallationStore(),
 });
 
 // Clear All Command
@@ -81,7 +96,6 @@ app.command('/requestoff', async ({ body, ack, say }) => {
           type: 'input',
           element: {
             type: 'datepicker',
-            // initial_date: '2022-01-09',
             initial_date: `${d[2]}-${d[0]}-${d[1]}`,
             placeholder: {
               type: 'plain_text',
