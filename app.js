@@ -44,9 +44,6 @@ const app = new App({
     'mpim:write',
     'users:read',
   ],
-  installerOptions: {
-    stateVerification: false,
-  },
   installationStore: {
     storeInstallation: async (installation) => {
       console.log('installation: ' + installation);
