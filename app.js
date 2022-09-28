@@ -6,7 +6,7 @@ const dbQuery = require('./database/find_user');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const AVAILY_POST_CHANNEL = 'availy-posts';
+const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
@@ -108,7 +108,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
             elements: [
               {
                 type: 'datepicker',
-                initial_date: '2000-01-01',
+                initial_date: '2022-01-01',
                 placeholder: {
                   type: 'plain_text',
                   text: 'Select a date',
