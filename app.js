@@ -367,6 +367,11 @@ app.action('endtimeaction', async ({ ack, body }) => {
   }
 });
 
+let userName;
+let shiftDate;
+let shiftStartTime;
+let shiftEndTime;
+
 app.action('confirmaction', async ({ ack, body, context }) => {
   ack();
   // try posting to availy-posts
@@ -396,12 +401,10 @@ app.action('confirmaction', async ({ ack, body, context }) => {
   }
 
   // find the correct shift to post
-  let shiftDate;
-  let shiftStartTime;
-  let shiftEndTime;
 
   shifts.forEach((shift) => {
     if (shift.messageTS === body.message.ts && shift.user === body.user.name) {
+      userName = shift.user;
       shiftDate = shift.date;
       shiftStartTime = shift.startTime;
       shiftEndTime = shift.endTime;
@@ -417,7 +420,7 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${user}> is requesting off on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
+            text: `<@${userName}> is requesting off on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
         {
@@ -461,14 +464,6 @@ app.action('confirmaction', async ({ ack, body, context }) => {
   } catch (error) {
     console.log(error);
   }
-
-  try {
-    shifts = shifts.filter((shift) => {
-      shift.messageTS != body.message.ts;
-    });
-  } catch (error) {
-    console.log(error);
-  }
 });
 
 app.action('cancelaction', async ({ ack, body, context }) => {
@@ -484,7 +479,17 @@ app.action('cancelaction', async ({ ack, body, context }) => {
   } catch (error) {
     console.log(error);
   }
+
+  try {
+    shifts = shifts.filter((shift) => {
+      shift.messageTS != body.message.ts && shift.user != body.user.name;
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
+
+// cover shift click needs to be updated to use the shift objects
 
 app.action('cover_shift_click', async ({ ack, body, context }) => {
   const person_covering = body.user.name;
@@ -503,7 +508,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+            text: `<@${person_covering}> is covering <@${user_name}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
           },
         },
       ],
@@ -520,7 +525,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     subject: `Shift Cover Alert - ${new Date().toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
     })}`,
-    html: `<h4>${person_covering} is covering ${user} on</h4>
+    html: `<h4>${person_covering} is covering ${user_name} on</h4>
            <h4>Date: ${date}</h4>
            <h4>Time: ${startTime} - ${endTime}</h4>`,
   };
@@ -533,6 +538,14 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
       console.log('Email sent: ' + info.response);
     }
   });
+
+  try {
+    shifts = shifts.filter((shift) => {
+      shift.messageTS != body.message.ts && shift.user != body.user.name;
+    });
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.action('cover_shift_delete', async ({ ack, body, context }) => {
@@ -550,6 +563,14 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  try {
+    shifts = shifts.filter((shift) => {
+      shift.messageTS != body.message.ts && shift.user != body.user.name;
+    });
+  } catch (error) {
+    console.log(error);
   }
 });
 
