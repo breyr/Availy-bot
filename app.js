@@ -78,14 +78,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
 
-  const user = payload.user_name;
   if (payload.channel_name === 'directmessage') {
-    const d = new Date()
-      .toLocaleDateString('en-US', {
-        timeZone: 'America/New_York',
-      })
-      .split('/');
-
     try {
       const result = await app.client.chat.postMessage({
         token: context.botToken,
@@ -102,53 +95,63 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
           {
             type: 'section',
             text: {
-              type: 'mrkdwn',
-              text: '*Shift date:*',
+              type: 'plain_text',
+              text: 'Shift Date:',
+              emoji: true,
             },
-            accessory: {
-              type: 'datepicker',
-              initial_date: `${d[2]}-${d[0]}-${d[1]}`,
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
+          },
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'datepicker',
+                initial_date: '2000-01-01',
+                placeholder: {
+                  type: 'plain_text',
+                  text: 'Select a date',
+                  emoji: true,
+                },
+                action_id: 'datepickeraction',
               },
-              action_id: 'datepicker-action',
-            },
+            ],
           },
           {
             type: 'section',
             text: {
-              type: 'mrkdwn',
-              text: '*Shift start time:*',
-            },
-            accessory: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
-              },
-              action_id: 'timepicker-action',
+              type: 'plain_text',
+              text: 'Shift Start & End Times:',
+              emoji: true,
             },
           },
           {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: '*Shift end time:*',
-            },
-            accessory: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
+            type: 'actions',
+            elements: [
+              {
+                type: 'timepicker',
+                initial_time: '13:37',
+                placeholder: {
+                  type: 'plain_text',
+                  text: 'Select time',
+                  emoji: true,
+                },
+                action_id: 'starttimeaction',
               },
-              action_id: 'timepicker-action',
-            },
+            ],
+          },
+          {
+            type: 'actions',
+            elements: [
+              {
+                type: 'timepicker',
+                initial_time: '13:37',
+                placeholder: {
+                  type: 'plain_text',
+                  text: 'Select time',
+                  emoji: true,
+                },
+                action_id: 'endtimeaction',
+              },
+            ],
           },
           {
             type: 'actions',
@@ -162,7 +165,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
                 },
                 style: 'primary',
                 value: 'click_me_123',
-                action_id: 'actionId-0',
+                action_id: 'confirmaction',
               },
               {
                 type: 'button',
@@ -173,7 +176,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
                 },
                 style: 'danger',
                 value: 'click_me_123',
-                action_id: 'actionId-1',
+                action_id: 'cancelaction',
               },
             ],
           },
@@ -197,6 +200,44 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
     } catch (error) {
       console.log(error);
     }
+  }
+});
+
+app.action('datepickeraction', async ({ ack, body, context }) => {
+  ack();
+  // retrieve date from picker
+  console.log(`Date Picker Body: \n ${body}`);
+});
+
+app.action('starttimeaction', async ({ ack, body, context }) => {
+  ack();
+  // retrieve start time from picker
+  console.log(`Start Time Picker Body: \n ${body}`);
+});
+
+app.action('endtimeaction', async ({ ack, body, context }) => {
+  ack();
+  // retrieve end time from picker
+  console.log(`End Time Picker Body: \n ${body}`);
+});
+
+app.action('confirmaction', async ({ ack, body, context }) => {
+  ack();
+  // try posting to availy-posts
+});
+
+app.action('cancelaction', async ({ ack, body, context }) => {
+  ack();
+  // delete message
+  try {
+    const result = await app.client.chat.delete({
+      token: context.botToken,
+      channel: body.channel.id,
+      ts: body.message.ts,
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
   }
 });
 
