@@ -366,11 +366,21 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   await ack();
 
   try {
-    // delete request message
-    const result = await app.client.chat.delete({
+    // update message
+    const result = await app.client.chat.update({
       token: context.botToken,
+      // ts of message to update
       ts: body.message.ts,
       channel: body.channel.id,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+          },
+        },
+      ],
     });
     console.log(result);
   } catch (error) {
@@ -404,21 +414,11 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
   // only delete the message if the user who clicked it is the user who requested it
   if (body.message.text.includes(body.user.id)) {
     try {
-      // Update the message
-      const result = await app.client.chat.update({
+      // Delete the message
+      const result = await app.client.chat.delete({
         token: context.botToken,
-        // ts of message to update
         ts: body.message.ts,
         channel: body.channel.id,
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `<@${user}> has deleted request`,
-            },
-          },
-        ],
       });
       console.log(result);
     } catch (error) {
