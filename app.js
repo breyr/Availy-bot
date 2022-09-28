@@ -457,7 +457,7 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           },
         },
       ],
-      text: `<@${userName}> sent a request to have a shift covered`,
+      text: `<@${userName}> is requesting off on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
     });
     console.log(result);
   } catch (error) {
@@ -497,6 +497,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   // check to see if the person covering is not the person in the shiftlet userName;
 
   console.log(`Cover shift body: ${JSON.stringify(body)}`);
+  console.log(`${JSON.stringify(body).message.text.split(' ')}`);
 
   await ack();
 
@@ -505,7 +506,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   let shiftStartTime;
   let shiftEndTime;
   shifts.forEach((shift) => {
-    if (shift.messageTS === body.message.ts && person_covering !== shift.user) {
+    if (body.message.text.includes(shift.user)) {
       userName = shift.user;
       shiftDate = shift.date;
       shiftStartTime = shift.startTime;
