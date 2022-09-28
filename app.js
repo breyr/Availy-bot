@@ -96,6 +96,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
 
+  console.log(`Request Off Payload: \n ${JSON.stringify(payload)}`);
   const user = payload.user_name;
 
   const d = new Date()
@@ -504,19 +505,6 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     1,
     shift_properties_list[0].length - 1
   );
-  let userName = '<@breyr2021>';
-  try {
-    result = await app.client.users.list({
-      token: context.botToken,
-    });
-    result.members.forEach((user) => {
-      if (user['id'] == userID) {
-        console.log(`Found User: \n ${user}`);
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
   let shiftDate = shift_properties_list[8];
   let shiftStartTime = shift_properties_list[12] + shift_properties_list[13];
   let shiftEndTime = shift_properties_list[15] + shift_properties_list[16];
@@ -533,7 +521,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${userName}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
+            text: `<@${person_covering}> is covering <@${usreID}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
       ],
