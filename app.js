@@ -262,9 +262,6 @@ app.action('endtimeaction', async ({ ack, body, context }) => {
 app.action('confirmaction', async ({ ack, body, context }) => {
   ack();
   // try posting to availy-posts
-  console.log(
-    `User: ${user}, Date: ${date}, Start Time: ${startTime}, End Time: ${endTime}`
-  );
 
   try {
     // update message
@@ -284,6 +281,49 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           },
         },
       ],
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    const result = await app.client.chat.postMessage({
+      token: context.botToken,
+      channel: AVAILY_POSTS_CHANNEL,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+          },
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Cover Shift',
+                emoji: true,
+              },
+              style: 'primary',
+              value: 'click_me_123',
+              action_id: 'cover_shift_click',
+            },
+          ],
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `_clicking cover shift will delete this message and email ITSS_`,
+          },
+        },
+      ],
+      text: 'new shift needing coverage posted',
     });
     console.log(result);
   } catch (error) {
