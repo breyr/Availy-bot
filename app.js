@@ -6,8 +6,6 @@ const dbQuery = require('./database/find_user');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const AVAILY_POSTS_CHANNEL = 'availy-posts';
-
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -83,99 +81,92 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   const date = inputText[0];
   const startTime = inputText[1];
   const endTime = inputText[2];
+  try {
+    // post message
+    const result = await app.client.chat.postMessage({
+      token: context.botToken,
+      channel: body.channel.id,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `_*request sent* at ${new Date().toLocaleTimeString('en-US', {
+              timeZone: 'America/New_York',
+            })}_`,
+          },
+        },
+      ],
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 
-  if (payload.channel_name === 'directmessage') {
-    try {
-      // post message
-      const result = await app.client.chat.postMessage({
-        token: context.botToken,
-        channel: body.channel.id,
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `_*request sent* at ${new Date().toLocaleTimeString(
-                'en-US',
-                {
-                  timeZone: 'America/New_York',
-                }
-              )}_`,
-            },
+  try {
+    const result = await app.client.chat.postMessage({
+      token: context.botToken,
+      channel: AVAILY_POSTS_CHANNEL,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
           },
-        ],
-      });
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-    }
-
-    try {
-      const result = await app.client.chat.postMessage({
-        token: context.botToken,
-        channel: AVAILY_POSTS_CHANNEL,
-        blocks: [
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
-            },
-          },
-          {
-            type: 'actions',
-            elements: [
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  text: 'Cover Shift',
-                  emoji: true,
-                },
-                style: 'primary',
-                value: 'click_me_123',
-                action_id: 'cover_shift_click',
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Cover Shift',
+                emoji: true,
               },
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  text: 'Delete',
-                  emoji: true,
-                },
-                style: 'danger',
-                value: 'click_me_123',
-                action_id: 'cover_shift_delete',
-              },
-            ],
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: `_only the user who sent the request can delete this message_\n_clicking cover shift will delete this message and email ITSS_`,
+              style: 'primary',
+              value: 'click_me_123',
+              action_id: 'cover_shift_click',
             },
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Delete',
+                emoji: true,
+              },
+              style: 'danger',
+              value: 'click_me_123',
+              action_id: 'cover_shift_delete',
+            },
+          ],
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `_only the user who sent the request can delete this message_\n_clicking cover shift will delete this message and email ITSS_`,
           },
-        ],
-        text: `<@${user}> sent a request to have a shift covered`,
-      });
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-    }
-  } else {
-    // post a message only visible to user who called the command
-    try {
-      const result = await app.client.chat.postEphemeral({
-        token: context.botToken,
-        channel: payload.channel_id,
-        user: payload.user_id,
-        text: '*/requestoff* can only be called in your direct message with Availy',
-      });
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-    }
+        },
+      ],
+      text: `<@${user}> sent a request to have a shift covered`,
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+  // post a message only visible to user who called the command
+  try {
+    const result = await app.client.chat.postEphemeral({
+      token: context.botToken,
+      channel: payload.channel_id,
+      user: payload.user_id,
+      text: '*/requestoff* can only be called in your direct message with Availy',
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
   }
 });
 
