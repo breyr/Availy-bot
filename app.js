@@ -511,7 +511,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     });
     result.members.forEach((user) => {
       if (user['id'] == userID) {
-        console.log(user);
+        console.log(`Found User: \n ${user}`);
       }
     });
   } catch (error) {
