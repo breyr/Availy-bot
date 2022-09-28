@@ -85,7 +85,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
     // post message
     const result = await app.client.chat.postMessage({
       token: context.botToken,
-      channel: body.channel.id,
+      channel: payload.channel_id,
       blocks: [
         {
           type: 'section',
@@ -106,7 +106,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   try {
     const result = await app.client.chat.postMessage({
       token: context.botToken,
-      channel: AVAILY_POSTS_CHANNEL,
+      channel: payload.channel_id,
       blocks: [
         {
           type: 'section',
