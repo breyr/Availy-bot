@@ -81,6 +81,12 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
 
   user = payload.user_name;
 
+  const d = new Date()
+    .toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+    })
+    .split('/');
+
   if (payload.channel_name === 'directmessage') {
     try {
       const result = await app.client.chat.postMessage({
@@ -108,7 +114,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
             elements: [
               {
                 type: 'datepicker',
-                initial_date: '2022-01-01',
+                initial_date: `${d[2]}-${d[0]}-${d[1]}`,
                 placeholder: {
                   type: 'plain_text',
                   text: 'Select a date',
@@ -216,7 +222,7 @@ app.action('datepickeraction', async ({ ack, body, context }) => {
 });
 
 let startTime;
-app.action('starttimeaction', async ({ ack, body, context }) => {
+app.action('starttimeaction', async ({ ack, body }) => {
   ack();
   // retrieve start time from picker
   const selectedStartTime = body.actions[0].selected_time;
@@ -239,7 +245,7 @@ app.action('starttimeaction', async ({ ack, body, context }) => {
 });
 
 let endTime;
-app.action('endtimeaction', async ({ ack, body, context }) => {
+app.action('endtimeaction', async ({ ack, body }) => {
   ack();
   // retrieve end time from picker
   // have to convert from 24 hour to 12 hour time
