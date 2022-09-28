@@ -265,6 +265,30 @@ app.action('confirmaction', async ({ ack, body, context }) => {
   console.log(
     `User: ${user}, Date: ${date}, Start Time: ${startTime}, End Time: ${endTime}`
   );
+
+  try {
+    // update message
+    const result = await app.client.chat.update({
+      token: context.botToken,
+      // ts of message to update
+      ts: body.message.ts,
+      channel: body.channel.id,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `_*request sent* at ${new Date().toLocaleTimeString('en-US', {
+              timeZone: 'America/New_York',
+            })}_`,
+          },
+        },
+      ],
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 app.action('cancelaction', async ({ ack, body, context }) => {
