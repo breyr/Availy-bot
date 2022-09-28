@@ -493,7 +493,23 @@ app.action('cancelaction', async ({ ack, body, context }) => {
 app.action('cover_shift_click', async ({ ack, body, context }) => {
   const person_covering = body.user.name;
 
+  // get the correct shift
+  // check to see if the person covering is not the person in the shiftlet userName;
+
   await ack();
+
+  let userName;
+  let shiftDate;
+  let shiftStartTime;
+  let shiftEndTime;
+  shifts.forEach((shift) => {
+    if (shift.messageTS === body.message.ts && person_covering !== shift.user) {
+      userName = shift.user;
+      shiftDate = shift.date;
+      shiftStartTime = shift.startTime;
+      shiftEndTime = shift.endTime;
+    }
+  });
 
   try {
     // update message
@@ -507,7 +523,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${user_name}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+            text: `<@${person_covering}> is covering <@${userName}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
       ],
@@ -524,9 +540,9 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     subject: `Shift Cover Alert - ${new Date().toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
     })}`,
-    html: `<h4>${person_covering} is covering ${user_name} on</h4>
-           <h4>Date: ${date}</h4>
-           <h4>Time: ${startTime} - ${endTime}</h4>`,
+    html: `<h4>${person_covering} is covering ${userName} on</h4>
+           <h4>Date: ${shiftDate}</h4>
+           <h4>Time: ${shiftStartTime} - ${shiftEndTime}</h4>`,
   };
 
   // takes a while to send the email
@@ -540,7 +556,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   try {
     shifts = shifts.filter((shift) => {
-      shift.messageTS != body.message.ts && shift.user != body.user.name;
+      shift.messageTS != body.message.ts;
     });
   } catch (error) {
     console.log(error);
