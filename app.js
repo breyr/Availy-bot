@@ -431,7 +431,7 @@ app.command('/test', async ({ ack, payload, context }) => {
   ack();
 
   console.log('test command');
-  console.log(`Body: \n ${payload} \n Context: \n ${context}`);
+  console.log(payload.text);
 });
 
 (async () => {
