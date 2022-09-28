@@ -87,7 +87,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
       .split('/');
 
     try {
-      const result = await app.client.postMessage({
+      const result = await app.client.chat.postMessage({
         token: context.botToken,
         channel: payload.channel_id,
         blocks: [
