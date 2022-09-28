@@ -10,12 +10,14 @@ const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
 class Shift {
   constructor(
-    messageTS,
+    user,
+    messageTS = '',
     date = '01/01/2022',
     startTime = '12:00 am',
     endTime = '12:00 am'
   ) {
-    (this.messageTS = messageTS),
+    (this.user = user),
+      (this.messageTS = messageTS),
       (this.date = date),
       (this.startTime = startTime),
       (this.endTime = endTime);
@@ -90,12 +92,11 @@ const app = new App({
 
 // Request Off Command
 // change to setemail
-let user;
 app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
 
-  user = payload.user_name;
+  const user = payload.user_name;
 
   const d = new Date()
     .toLocaleDateString('en-US', {
@@ -208,7 +209,9 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
         ],
         text: 'request form posted',
       });
-      console.log(result);
+      console.log(`New request form posted: ${result}`);
+      let newShift = new Shift(user, result.message.ts);
+      shifts.push(newShift);
     } catch (error) {
       console.log(error);
     }
@@ -237,12 +240,17 @@ app.action('datepickeraction', async ({ ack, body, context }) => {
   // check if there is an object with message ID
   if (shifts.length != 0) {
     const shiftExist = shifts.filter((shift) => {
-      return shift.messageTS === body.message.ts;
+      return (
+        shift.messageTS === body.message.ts && shift.user == body.user.name
+      );
     });
     if (shiftExist) {
       // update the date properties
       shifts.forEach((shift) => {
-        if (shift.messageTS === body.message.ts) {
+        if (
+          shift.messageTS === body.message.ts &&
+          shift.user == body.user.name
+        ) {
           // update the date property
           shift.date = date;
         }
@@ -283,12 +291,17 @@ app.action('starttimeaction', async ({ ack, body }) => {
   // check if there is an object with message ID
   if (shifts.length != 0) {
     const shiftExist = shifts.filter((shift) => {
-      return shift.messageID === body.messageID;
+      return (
+        shift.messageTS === body.message.ts && shift.user == body.user.name
+      );
     });
     if (shiftExist) {
       // update the date properties
       shifts.forEach((shift) => {
-        if (shift.messageTS === body.message.ts) {
+        if (
+          shift.messageTS === body.message.ts &&
+          shift.user === body.user.name
+        ) {
           // update the date property
           shift.startTime = startTime;
         }
@@ -327,12 +340,17 @@ app.action('endtimeaction', async ({ ack, body }) => {
   // check if there is an object with message ID
   if (shifts.length != 0) {
     const shiftExist = shifts.filter((shift) => {
-      return shift.messageTS === body.message.ts;
+      return (
+        shift.messageTS === body.message.ts && shift.user === body.user.name
+      );
     });
     if (shiftExist) {
       // update the date properties
       shifts.forEach((shift) => {
-        if (shift.messageTS === body.message.ts) {
+        if (
+          shift.messageTS === body.message.ts &&
+          shift.user === body.user.name
+        ) {
           // update the date property
           shift.endTime = endTime;
         }
@@ -383,7 +401,7 @@ app.action('confirmaction', async ({ ack, body, context }) => {
   let shiftEndTime;
 
   shifts.forEach((shift) => {
-    if (shift.messageTS === body.message.ts) {
+    if (shift.messageTS === body.message.ts && shift.user === body.user.name) {
       shiftDate = shift.date;
       shiftStartTime = shift.startTime;
       shiftEndTime = shift.endTime;
