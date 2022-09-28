@@ -427,6 +427,18 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
   }
 });
 
+app.command('/test', async ({ ack, body, context }) => {
+  ack();
+
+  console.log('test command');
+
+  try {
+    console.log(`Body: \n ${body} \n Context: \n ${context}`);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 (async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);
