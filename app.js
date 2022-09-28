@@ -413,8 +413,7 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
   ack();
   // only delete the message if the user who clicked it is the user who requested it
   console.log('delete button clicked');
-  console.log(body.message.text);
-  if (body.message.text.includes(body.user.username)) {
+  if (body.message.text.includes(body.user.id)) {
     console.log('can delete message');
   }
 });
