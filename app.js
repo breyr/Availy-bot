@@ -367,11 +367,6 @@ app.action('endtimeaction', async ({ ack, body }) => {
   }
 });
 
-let userName;
-let shiftDate;
-let shiftStartTime;
-let shiftEndTime;
-
 app.action('confirmaction', async ({ ack, body, context }) => {
   ack();
   // try posting to availy-posts
@@ -401,6 +396,10 @@ app.action('confirmaction', async ({ ack, body, context }) => {
   }
 
   // find the correct shift to post
+  let userName;
+  let shiftDate;
+  let shiftStartTime;
+  let shiftEndTime;
 
   shifts.forEach((shift) => {
     if (shift.messageTS === body.message.ts && shift.user === body.user.name) {
@@ -458,7 +457,7 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           },
         },
       ],
-      text: `<@${user}> sent a request to have a shift covered`,
+      text: `<@${userName}> sent a request to have a shift covered`,
     });
     console.log(result);
   } catch (error) {
