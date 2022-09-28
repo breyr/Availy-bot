@@ -74,9 +74,12 @@ const app = new App({
 
 // Request Off Command
 // change to setemail
+let user;
 app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
+
+  user = payload.user_name;
 
   if (payload.channel_name === 'directmessage') {
     try {
@@ -128,7 +131,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
             elements: [
               {
                 type: 'timepicker',
-                initial_time: '13:37',
+                initial_time: '00:00',
                 placeholder: {
                   type: 'plain_text',
                   text: 'Select time',
@@ -143,7 +146,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
             elements: [
               {
                 type: 'timepicker',
-                initial_time: '13:37',
+                initial_time: '00:00',
                 placeholder: {
                   type: 'plain_text',
                   text: 'Select time',
@@ -203,27 +206,65 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   }
 });
 
+let date;
 app.action('datepickeraction', async ({ ack, body, context }) => {
   ack();
   // retrieve date from picker
-  console.log(`Date Picker Body: \n ${body}`);
+  const split_date = body.actions[0].selected_date.split('-');
+  date = split_date[1] + '/' + split_date[2] + '/' + split_date[0];
+  console.log(date);
 });
 
+let startTime;
 app.action('starttimeaction', async ({ ack, body, context }) => {
   ack();
   // retrieve start time from picker
-  console.log(`Start Time Picker Body: \n ${body}`);
+  const selectedStartTime = body.actions[0].selected_time;
+  const startTimeHours = parseInt(
+    selectedStartTime.substring(0, selectedStartTime.length - 3)
+  );
+  const amOrPmStart = startTimeHours >= 12 ? 'pm' : 'am';
+  let startTimeHoursConverted;
+  if (startTimeHours == 12 || startTimeHours == 0o0) {
+    // this is some octal literal stuff idk whats going on
+    startTimeHoursConverted = 12;
+  } else {
+    startTimeHoursConverted = startTimeHours % 12;
+  }
+  startTime =
+    String(startTimeHoursConverted) +
+    selectedStartTime.slice(2) +
+    ' ' +
+    amOrPmStart;
 });
 
+let endTime;
 app.action('endtimeaction', async ({ ack, body, context }) => {
   ack();
   // retrieve end time from picker
-  console.log(`End Time Picker Body: \n ${body}`);
+  // have to convert from 24 hour to 12 hour time
+  const selectedEndTime = body.actions[0].selected_time;
+  const endTimeHours = parseInt(
+    selectedEndTime.substring(0, selectedEndTime.length - 3)
+  );
+  const amOrPmEnd = endTimeHours >= 12 ? 'pm' : 'am';
+  let endTimeHoursConverted;
+  if (endTimeHours == 12 || endTimeHours == 0o0) {
+    // this is some octal literal stuff idk whats going on
+    endTimeHoursConverted = 12;
+  } else {
+    endTimeHoursConverted = endTimeHours % 12;
+  }
+  endTime =
+    String(endTimeHoursConverted) + selectedEndTime.slice(2) + ' ' + amOrPmEnd;
 });
 
 app.action('confirmaction', async ({ ack, body, context }) => {
   ack();
   // try posting to availy-posts
+  console.log(
+    `User: ${user}, Date: ${date}, Start Time: ${startTime}, End Time: ${endTime}`
+  );
 });
 
 app.action('cancelaction', async ({ ack, body, context }) => {
