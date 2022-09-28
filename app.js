@@ -366,21 +366,11 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   await ack();
 
   try {
-    // update message
-    const result = await app.client.chat.update({
+    // delete request message
+    const result = await app.client.chat.delete({
       token: context.botToken,
-      // ts of message to update
       ts: body.message.ts,
       channel: body.channel.id,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${user}> on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
-          },
-        },
-      ],
     });
     console.log(result);
   } catch (error) {
