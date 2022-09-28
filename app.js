@@ -346,6 +346,8 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   await ack();
 
+  console.log(`Date: ${date} Time: ${starTime} - ${endTime}`);
+
   try {
     // update message
     const result = await app.client.chat.update({
