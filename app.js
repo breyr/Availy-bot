@@ -330,11 +330,11 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `_clicking cover shift will delete this message and email ITSS_`,
+            text: `_only the user who sent the request can delete this message_\n_clicking cover shift will delete this message and email ITSS_`,
           },
         },
       ],
-      text: 'new shift needing coverage posted',
+      text: `<@${user}> sent a request to have a shift covered`,
     });
     console.log(result);
   } catch (error) {
