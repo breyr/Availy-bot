@@ -337,7 +337,7 @@ app.action('confirm_click', async ({ ack, body, context }) => {
           },
         },
       ],
-      text: 'new shift needing coverage posted',
+      text: `<@${user}> sent a request to have a shift covered`,
     });
     console.log(result);
   } catch (error) {
@@ -413,7 +413,9 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
   ack();
   // only delete the message if the user who clicked it is the user who requested it
   console.log('delete button clicked');
-  console.log(body);
+  if (body.message.text.includes(body.user.username)) {
+    console.log('can delete message');
+  }
 });
 (async () => {
   // Start your app
