@@ -499,7 +499,24 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   await ack();
 
-  let userName = shift_properties_list[0];
+  // this value is <@userID>
+  let userID = shift_properties_list[0].substring(
+    1,
+    shift_properties_list[0].length - 1
+  );
+  let userName = '<@breyr2021>';
+  try {
+    result = await app.client.users.list({
+      token: context.botToken,
+    });
+    result.members.forEach((user) => {
+      if (user['id'] == userID) {
+        console.log(user);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
   let shiftDate = shift_properties_list[8];
   let shiftStartTime = shift_properties_list[12] + shift_properties_list[13];
   let shiftEndTime = shift_properties_list[15] + shift_properties_list[16];
