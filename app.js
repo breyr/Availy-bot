@@ -427,11 +427,11 @@ app.action('cover_shift_delete', async ({ ack, body, context }) => {
   }
 });
 
-app.command('/test', async ({ ack, body, context }) => {
+app.command('/test', async ({ ack, payload, context }) => {
   ack();
 
   console.log('test command');
-  console.log(`Body: \n ${body} \n Context: \n ${context}`);
+  console.log(`Body: \n ${payload} \n Context: \n ${context}`);
 });
 
 (async () => {
