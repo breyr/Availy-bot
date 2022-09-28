@@ -431,12 +431,7 @@ app.command('/test', async ({ ack, body, context }) => {
   ack();
 
   console.log('test command');
-
-  try {
-    console.log(`Body: \n ${body} \n Context: \n ${context}`);
-  } catch (error) {
-    console.log(error);
-  }
+  console.log(`Body: \n ${body} \n Context: \n ${context}`);
 });
 
 (async () => {
