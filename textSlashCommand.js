@@ -6,8 +6,6 @@ const dbQuery = require('./database/find_user');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
-const AVAILY_POST_CHANNEL = 'availy-posts';
-
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -78,125 +76,64 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   // acknowledge request
   ack();
 
+  const inputText = payload.text.split(' ');
   const user = payload.user_name;
-  if (payload.channel_name === 'directmessage') {
-    const d = new Date()
-      .toLocaleDateString('en-US', {
-        timeZone: 'America/New_York',
-      })
-      .split('/');
+  const date = inputText[0];
+  const startTime = inputText[1];
+  const endTime = inputText[2];
 
-    try {
-      const result = await app.client.postMessage({
-        token: context.botToken,
-        channel: payload.channel_id,
-        blocks: [
-          {
-            type: 'header',
-            text: {
-              type: 'plain_text',
-              text: 'Fill out this form please 🙂',
-              emoji: true,
-            },
+  try {
+    const result = await app.client.chat.postMessage({
+      token: context.botToken,
+      channel: payload.channel_id,
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
           },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: '*Shift date:*',
-            },
-            accessory: {
-              type: 'datepicker',
-              initial_date: `${d[2]}-${d[0]}-${d[1]}`,
-              placeholder: {
+        },
+        {
+          type: 'actions',
+          elements: [
+            {
+              type: 'button',
+              text: {
                 type: 'plain_text',
-                text: 'Select time',
+                text: 'Cover Shift',
                 emoji: true,
               },
-              action_id: 'datepicker-action',
+              style: 'primary',
+              value: 'click_me_123',
+              action_id: 'cover_shift_click',
             },
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: '*Shift start time:*',
-            },
-            accessory: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
+            {
+              type: 'button',
+              text: {
                 type: 'plain_text',
-                text: 'Select time',
+                text: 'Delete',
                 emoji: true,
               },
-              action_id: 'timepicker-action',
+              style: 'danger',
+              value: 'click_me_123',
+              action_id: 'cover_shift_delete',
             },
+          ],
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `_only the user who sent the request can delete this message_\n_clicking cover shift will delete this message and email ITSS_`,
           },
-          {
-            type: 'section',
-            text: {
-              type: 'mrkdwn',
-              text: '*Shift end time:*',
-            },
-            accessory: {
-              type: 'timepicker',
-              initial_time: '00:00',
-              placeholder: {
-                type: 'plain_text',
-                text: 'Select time',
-                emoji: true,
-              },
-              action_id: 'timepicker-action',
-            },
-          },
-          {
-            type: 'actions',
-            elements: [
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  text: 'Confirm',
-                  emoji: true,
-                },
-                style: 'primary',
-                value: 'click_me_123',
-                action_id: 'actionId-0',
-              },
-              {
-                type: 'button',
-                text: {
-                  type: 'plain_text',
-                  text: 'Cancel',
-                  emoji: true,
-                },
-                style: 'danger',
-                value: 'click_me_123',
-                action_id: 'actionId-1',
-              },
-            ],
-          },
-        ],
-        text: 'request form posted',
-      });
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-    }
-  } else {
-    // post a message only visible to user who called the command
-    try {
-      const result = await app.client.chat.postEphemeral({
-        token: context.botToken,
-        channel: payload.channel_id,
-        user: payload.user_id,
-        text: '*/requestoff* can only be called in your direct message with Availy',
-      });
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-    }
+        },
+      ],
+      text: `<@${user}> sent a request to have a shift covered`,
+    });
+    console.log(result);
+  } catch (error) {
+    console.log(error);
   }
 });
 
