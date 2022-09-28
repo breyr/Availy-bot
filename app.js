@@ -81,27 +81,6 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   const date = inputText[0];
   const startTime = inputText[1];
   const endTime = inputText[2];
-  try {
-    // post message
-    const result = await app.client.chat.postMessage({
-      token: context.botToken,
-      channel: payload.channel_id,
-      blocks: [
-        {
-          type: 'section',
-          text: {
-            type: 'mrkdwn',
-            text: `_*request sent* at ${new Date().toLocaleTimeString('en-US', {
-              timeZone: 'America/New_York',
-            })}_`,
-          },
-        },
-      ],
-    });
-    console.log(result);
-  } catch (error) {
-    console.log(error);
-  }
 
   try {
     const result = await app.client.chat.postMessage({
