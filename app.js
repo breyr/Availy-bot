@@ -156,18 +156,6 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   } catch (error) {
     console.log(error);
   }
-  // post a message only visible to user who called the command
-  try {
-    const result = await app.client.chat.postEphemeral({
-      token: context.botToken,
-      channel: payload.channel_id,
-      user: payload.user_id,
-      text: '*/requestoff* can only be called in your direct message with Availy',
-    });
-    console.log(result);
-  } catch (error) {
-    console.log(error);
-  }
 });
 
 app.action('cover_shift_click', async ({ ack, body, context }) => {
