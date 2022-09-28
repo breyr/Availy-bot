@@ -495,9 +495,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   // get the correct shift
   // check to see if the person covering is not the person in the shiftlet userName;
-
-  console.log(`Cover shift body: ${JSON.stringify(body)}`);
-  console.log(`${JSON.stringify(body).message.text.split(' ')}`);
+  console.log(`${body.message.text.split(' ')}`);
 
   await ack();
 
