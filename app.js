@@ -495,22 +495,14 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   // get the correct shift
   // check to see if the person covering is not the person in the shiftlet userName;
-  console.log(`${body.message.text.split(' ')}`);
+  shift_properties_list = body.message.text.split(' ');
 
   await ack();
 
-  let userName;
-  let shiftDate;
-  let shiftStartTime;
-  let shiftEndTime;
-  shifts.forEach((shift) => {
-    if (body.message.text.includes(shift.user)) {
-      userName = shift.user;
-      shiftDate = shift.date;
-      shiftStartTime = shift.startTime;
-      shiftEndTime = shift.endTime;
-    }
-  });
+  let userName = shift_properties_list[0];
+  let shiftDate = shift_properties_list[8];
+  let shiftStartTime = shift_properties_list[12] + shift_properties_list[13];
+  let shiftEndTime = shift_properties_list[15] + shift_properties_list[16];
 
   try {
     // update message
