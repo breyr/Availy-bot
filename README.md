@@ -16,7 +16,7 @@ Availy is a shift application used for requesting time off. A user goes into the
   - /requestoff
 - Basic request off form
 
-![Basic request off form](/images/basic_form.png 'Basic Form')
+![Basic request off form](/images/basic_form_new.png 'Basic Form')
 
 ## **Contributions**
 

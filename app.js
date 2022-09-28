@@ -8,6 +8,22 @@ require('dotenv').config();
 
 const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
+class Shift {
+  constructor(
+    messageTS,
+    date = '01/01/2022',
+    startTime = '12:00 am',
+    endTime = '12:00 am'
+  ) {
+    (this.messageTS = messageTS),
+      (this.date = date),
+      (this.startTime = startTime),
+      (this.endTime = endTime);
+  }
+}
+
+let shifts = [];
+
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -212,16 +228,37 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   }
 });
 
-let date;
 app.action('datepickeraction', async ({ ack, body, context }) => {
   ack();
   // retrieve date from picker
   const split_date = body.actions[0].selected_date.split('-');
-  date = split_date[1] + '/' + split_date[2] + '/' + split_date[0];
-  console.log(date);
+  const date = split_date[1] + '/' + split_date[2] + '/' + split_date[0];
+
+  // check if there is an object with message ID
+  if (shifts.length != 0) {
+    const shiftExist = shifts.filter((shift) => {
+      return shift.messageTS === body.message.ts;
+    });
+    if (shiftExist) {
+      // update the date properties
+      shifts.forEach((shift) => {
+        if (shift.messageTS === body.message.ts) {
+          // update the date property
+          shift.date = date;
+        }
+      });
+    } else {
+      // add the object
+      let newShift = new Shift(body.message.ts, date);
+      shifts.push(newShift);
+    }
+  } else {
+    // add the object
+    let newShift = new Shift(body.message.ts, date);
+    shifts.push(newShift);
+  }
 });
 
-let startTime;
 app.action('starttimeaction', async ({ ack, body }) => {
   ack();
   // retrieve start time from picker
@@ -237,14 +274,37 @@ app.action('starttimeaction', async ({ ack, body }) => {
   } else {
     startTimeHoursConverted = startTimeHours % 12;
   }
-  startTime =
+  const startTime =
     String(startTimeHoursConverted) +
     selectedStartTime.slice(2) +
     ' ' +
     amOrPmStart;
+
+  // check if there is an object with message ID
+  if (shifts.length != 0) {
+    const shiftExist = shifts.filter((shift) => {
+      return shift.messageID === body.messageID;
+    });
+    if (shiftExist) {
+      // update the date properties
+      shifts.forEach((shift) => {
+        if (shift.messageTS === body.message.ts) {
+          // update the date property
+          shift.startTime = startTime;
+        }
+      });
+    } else {
+      // add the object
+      let newShift = new Shift(body.message.ts, startTime);
+      shifts.push(newShift);
+    }
+  } else {
+    // add the object
+    let newShift = new Shift(body.message.ts, startTime);
+    shifts.push(newShift);
+  }
 });
 
-let endTime;
 app.action('endtimeaction', async ({ ack, body }) => {
   ack();
   // retrieve end time from picker
@@ -261,8 +321,32 @@ app.action('endtimeaction', async ({ ack, body }) => {
   } else {
     endTimeHoursConverted = endTimeHours % 12;
   }
-  endTime =
+  const endTime =
     String(endTimeHoursConverted) + selectedEndTime.slice(2) + ' ' + amOrPmEnd;
+
+  // check if there is an object with message ID
+  if (shifts.length != 0) {
+    const shiftExist = shifts.filter((shift) => {
+      return shift.messageTS === body.message.ts;
+    });
+    if (shiftExist) {
+      // update the date properties
+      shifts.forEach((shift) => {
+        if (shift.messageTS === body.message.ts) {
+          // update the date property
+          shift.endTime = endTime;
+        }
+      });
+    } else {
+      // add the object
+      let newShift = new Shift(body.messageID, endTime);
+      shifts.push(newShift);
+    }
+  } else {
+    // add the object
+    let newShift = new Shift(body.messageID, endTime);
+    shifts.push(newShift);
+  }
 });
 
 app.action('confirmaction', async ({ ack, body, context }) => {
@@ -293,6 +377,19 @@ app.action('confirmaction', async ({ ack, body, context }) => {
     console.log(error);
   }
 
+  // find the correct shift to post
+  let shiftDate;
+  let shiftStartTime;
+  let shiftEndTime;
+
+  shifts.forEach((shift) => {
+    if (shift.messageTS === body.message.ts) {
+      shiftDate = shift.date;
+      shiftStartTime = shift.startTime;
+      shiftEndTime = shift.endTime;
+    }
+  });
+
   try {
     const result = await app.client.chat.postMessage({
       token: context.botToken,
@@ -302,7 +399,7 @@ app.action('confirmaction', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${user}> is requesting off on \n *Date*: ${date} \n *Time*: ${startTime} - ${endTime}`,
+            text: `<@${user}> is requesting off on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
         {
@@ -343,6 +440,14 @@ app.action('confirmaction', async ({ ack, body, context }) => {
       text: `<@${user}> sent a request to have a shift covered`,
     });
     console.log(result);
+  } catch (error) {
+    console.log(error);
+  }
+
+  try {
+    shifts = shifts.filter((shift) => {
+      shift.messageTS != body.message.ts;
+    });
   } catch (error) {
     console.log(error);
   }
