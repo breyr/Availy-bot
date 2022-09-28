@@ -205,8 +205,11 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
 });
 
 let startTime = '12:00 am'; // default time
-app.action('time-start-action', async ({ body }) => {
+app.action('time-start-action', async ({ ack, body }) => {
   // have to convert from 24 hour to 12 hour time
+
+  ack();
+
   let selectedStartTime = body.actions[0].selected_time;
   const startTimeHours = parseInt(
     selectedStartTime.substring(0, selectedStartTime.length - 3)
@@ -227,8 +230,11 @@ app.action('time-start-action', async ({ body }) => {
 });
 
 let endTime = '12:00 am'; // default time
-app.action('time-end-action', async ({ body }) => {
+app.action('time-end-action', async ({ ack, body }) => {
   // have to convert from 24 hour to 12 hour time
+
+  ack();
+
   let selectedEndTime = body.actions[0].selected_time;
   const endTimeHours = parseInt(
     selectedEndTime.substring(0, selectedEndTime.length - 3)
@@ -247,7 +253,9 @@ app.action('time-end-action', async ({ body }) => {
 
 // these actions have to occur or else confirm never sees the updated variable
 let date = new Date().toLocaleDateString(); // defualt date is the current date
-app.action('datepicker-action', async ({ body }) => {
+app.action('datepicker-action', async ({ ack, body }) => {
+  ack();
+
   // split selected date by '-'
   const split_date = body.actions[0].selected_date.split('-');
   date = split_date[1] + '/' + split_date[2] + '/' + split_date[0];
