@@ -313,6 +313,17 @@ app.action('confirmaction', async ({ ack, body, context }) => {
               value: 'click_me_123',
               action_id: 'cover_shift_click',
             },
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Delete',
+                emoji: true,
+              },
+              style: 'danger',
+              value: 'click_me_123',
+              action_id: 'cover_shift_delete',
+            },
           ],
         },
         {
