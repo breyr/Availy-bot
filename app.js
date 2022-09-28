@@ -412,9 +412,28 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 app.action('cover_shift_delete', async ({ ack, body, context }) => {
   ack();
   // only delete the message if the user who clicked it is the user who requested it
-  console.log('delete button clicked');
   if (body.message.text.includes(body.user.id)) {
-    console.log('can delete message');
+    try {
+      // Update the message
+      const result = await app.client.chat.update({
+        token: context.botToken,
+        // ts of message to update
+        ts: body.message.ts,
+        channel: body.channel.id,
+        blocks: [
+          {
+            type: 'section',
+            text: {
+              type: 'mrkdwn',
+              text: `<@${user}> has deleted request`,
+            },
+          },
+        ],
+      });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
   }
 });
 
