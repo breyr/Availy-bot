@@ -316,13 +316,24 @@ app.action('confirm_click', async ({ ack, body, context }) => {
               value: 'click_me_123',
               action_id: 'cover_shift_click',
             },
+            {
+              type: 'button',
+              text: {
+                type: 'plain_text',
+                text: 'Delete',
+                emoji: true,
+              },
+              style: 'danger',
+              value: 'click_me_123',
+              action_id: 'cover_shift_delete',
+            },
           ],
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `_clicking cover shift will delete this message and email ITSS_`,
+            text: `_only the user who sent the request can delete this message_\n_clicking cover shift will delete this message and email ITSS_`,
           },
         },
       ],
@@ -353,8 +364,6 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   const person_covering = body.user.name;
 
   await ack();
-
-  console.log(`Date: ${date} Time: ${starTime} - ${endTime}`);
 
   try {
     // update message
@@ -400,6 +409,12 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   });
 });
 
+app.action('cover_shift_delete', async ({ ack, body, context }) => {
+  ack();
+  // only delete the message if the user who clicked it is the user who requested it
+  console.log('delete button clicked');
+  console.log(body);
+});
 (async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);
