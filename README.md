@@ -4,6 +4,8 @@
 
 Availy is a shift application used for requesting time off. A user goes into the DM channel with Availy, types /requestoff and fills out a form provided. Availy then posts the request in “availy-posts”, allowing other users to cover that shift. Once a shift is covered, the message gets updated in “availy-posts”
 
+_Currently in use by Arcadia University IT Department_
+
 ## **Versions**
 
 ### [1.0.0](https://github.com/breyr/Availy-bot) - Release Date 09/27/2022
@@ -24,6 +26,6 @@ Thank you to all those who support me in my devlopment of Availy!
 
 - Testing: [Adam Spera](https://github.com/AdamSpera), Buzz Lombardi
 
-##### \_\_\_\_\_\_\_\_\_\_\_\_
+##### ___
 
 ##### - Brey Rivera
