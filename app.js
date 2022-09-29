@@ -516,11 +516,10 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
     result.mebers.forEach((member) => {
       if (member['id'] == userID) {
+        console.log(`Found matching member: \n ${member}`);
         userName = member['display_name'];
       }
     });
-
-    console.log(result.members);
   } catch (error) {
     console.error(error);
   }
