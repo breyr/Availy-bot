@@ -515,9 +515,11 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     });
 
     result.members.forEach((member) => {
-      if (member['id'] == userID) {
-        userName = member['name'];
-      }
+      // if (member['id'] == userID) {
+      //   userName = member['name'];
+      // }
+      console.log(`Searching for this UID: ${userID}`);
+      console.log(members['id'] + ' ' + members['name']);
     });
   } catch (error) {
     console.error(error);
