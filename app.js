@@ -500,10 +500,24 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
   await ack();
   shift_properties_list = body.message.text.split(' ');
 
+  // this value is <@userID>
+  let userID = shift_properties_list[0].substring(
+    1,
+    shift_properties_list[0].length - 1
+  );
+
+  let userName;
+
   try {
     // Call the users.list method using the WebClient
     const result = await app.client.users.list({
       token: context.botToken,
+    });
+
+    result.mebers.forEach((member) => {
+      if (member['id'] == userID) {
+        userName = member['display_name'];
+      }
     });
 
     console.log(result.members);
@@ -511,11 +525,6 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     console.error(error);
   }
 
-  // this value is <@userID>
-  let userID = shift_properties_list[0].substring(
-    1,
-    shift_properties_list[0].length - 1
-  );
   let shiftDate = shift_properties_list[8];
   let shiftStartTime = shift_properties_list[12] + shift_properties_list[13];
   let shiftEndTime = shift_properties_list[15] + shift_properties_list[16];
@@ -532,7 +541,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${userID}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
+            text: `<@${person_covering}> is covering <@${userName}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
       ],
