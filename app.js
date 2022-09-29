@@ -514,6 +514,8 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
       token: context.botToken,
     });
 
+    console.log(JSON.stringify(result.members));
+
     result.members.forEach((member) => {
       if (member['id'] == userID) {
         console.log(`Found matching member: \n ${member}`);
