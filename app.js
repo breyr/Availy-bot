@@ -26,31 +26,6 @@ class Shift {
 
 let shifts = [];
 
-let usersStore = {};
-
-try {
-  // Call the users.list method using the WebClient
-  const result = await client.users.list();
-
-  saveUsers(result.members);
-} catch (error) {
-  console.error(error);
-}
-
-// Put users into the JavaScript object
-function saveUsers(usersArray) {
-  let userId = '';
-  usersArray.forEach(function (user) {
-    // Key user info on their unique user ID
-    userId = user['id'];
-
-    // Store the entire user object (you may not need all of the info)
-    usersStore[userId] = user;
-  });
-}
-
-console.log(`Users: \n ${usersStore}`);
-
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -521,9 +496,20 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   // get the correct shift
   // check to see if the person covering is not the person in the shiftlet userName;
-  shift_properties_list = body.message.text.split(' ');
 
   await ack();
+  shift_properties_list = body.message.text.split(' ');
+
+  try {
+    // Call the users.list method using the WebClient
+    const result = await client.users.list({
+      token: context.botToken,
+    });
+
+    console.log(result.members);
+  } catch (error) {
+    console.error(error);
+  }
 
   // this value is <@userID>
   let userID = shift_properties_list[0].substring(
