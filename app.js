@@ -502,7 +502,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   // this value is <@userID>
   let userID = shift_properties_list[0].substring(
-    1,
+    2,
     shift_properties_list[0].length - 1
   );
 
@@ -515,11 +515,9 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
     });
 
     result.members.forEach((member) => {
-      // if (member['id'] == userID) {
-      //   userName = member['name'];
-      // }
-      console.log(`Searching for this UID: ${userID}`);
-      console.log(member['id'] + ' ' + member['name']);
+      if (member['id'] == userID) {
+        userName = member['name'];
+      }
     });
   } catch (error) {
     console.error(error);
