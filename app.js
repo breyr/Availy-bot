@@ -519,7 +519,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
       //   userName = member['name'];
       // }
       console.log(`Searching for this UID: ${userID}`);
-      console.log(members['id'] + ' ' + members['name']);
+      console.log(member['id'] + ' ' + member['name']);
     });
   } catch (error) {
     console.error(error);
