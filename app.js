@@ -502,7 +502,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
 
   try {
     // Call the users.list method using the WebClient
-    const result = await client.users.list({
+    const result = await app.client.users.list({
       token: context.botToken,
     });
 
