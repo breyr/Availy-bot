@@ -514,14 +514,10 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
       token: context.botToken,
     });
 
-    console.log(JSON.stringify(result.members));
-
     result.members.forEach((member) => {
-      // if (member['id'] == userID) {
-      //   console.log(`Found matching member: \n ${member}`);
-      //   userName = member['display_name'];
-      // }
-      console.log(member['id'] + ' ' + member['name']);
+      if (member['id'] == userID) {
+        userName = member['name'];
+      }
     });
   } catch (error) {
     console.error(error);
