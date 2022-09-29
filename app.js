@@ -26,6 +26,31 @@ class Shift {
 
 let shifts = [];
 
+let usersStore = {};
+
+try {
+  // Call the users.list method using the WebClient
+  const result = await client.users.list();
+
+  saveUsers(result.members);
+} catch (error) {
+  console.error(error);
+}
+
+// Put users into the JavaScript object
+function saveUsers(usersArray) {
+  let userId = '';
+  usersArray.forEach(function (user) {
+    // Key user info on their unique user ID
+    userId = user['id'];
+
+    // Store the entire user object (you may not need all of the info)
+    usersStore[userId] = user;
+  });
+}
+
+console.log(`Users: \n ${usersStore}`);
+
 // initialize nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -521,7 +546,7 @@ app.action('cover_shift_click', async ({ ack, body, context }) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${person_covering}> is covering <@${usreID}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
+            text: `<@${person_covering}> is covering <@${userID}> on \n *Date*: ${shiftDate} \n *Time*: ${shiftStartTime} - ${shiftEndTime}`,
           },
         },
       ],
