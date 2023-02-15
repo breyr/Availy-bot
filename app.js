@@ -15,7 +15,7 @@ const get_current_date = () => {
     })
     .split('/');
 
-  return `${d[2]}-${d[0]}-${d[1]}`;
+  return `${d[0]}/${d[1]}/${d[2]}`;
 };
 
 class Shift {
