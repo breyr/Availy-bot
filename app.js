@@ -99,12 +99,6 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
   console.log(`Request Off Payload: \n ${JSON.stringify(payload)}`);
   const user = payload.user_name;
 
-  const d = new Date()
-    .toLocaleDateString('en-US', {
-      timeZone: 'America/New_York',
-    })
-    .split('/');
-
   if (payload.channel_name === 'directmessage') {
     try {
       const result = await app.client.chat.postMessage({
@@ -132,7 +126,7 @@ app.command('/requestoff', async ({ ack, payload, context }) => {
             elements: [
               {
                 type: 'datepicker',
-                initial_date: `${d[2]}-${d[0]}-${d[1]}`,
+                initial_date: '1970-01-01',
                 placeholder: {
                   type: 'plain_text',
                   text: 'Select a date',
