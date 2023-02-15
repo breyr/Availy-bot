@@ -8,15 +8,21 @@ require('dotenv').config();
 
 const AVAILY_POSTS_CHANNEL = 'availy-posts';
 
+const get_current_date = () => {
+  const d = new Date()
+    .toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+    })
+    .split('/');
+
+  return `${d[2]}-${d[0]}-${d[1]}`;
+};
+
 class Shift {
   constructor(
     user,
     messageTS = '',
-    date = new Date()
-      .toLocaleDateString('en-US', {
-        timeZone: 'America/New_York',
-      })
-      .split('/'),
+    date = get_current_date(),
     startTime = '12:00 am',
     endTime = '12:00 am'
   ) {
