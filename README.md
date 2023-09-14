@@ -1,4 +1,5 @@
 # Availy - _A Shift Appilcation_
+**This bot is not in production anymore, for the new version of Availy read [here](https://github.com/breyr/availyv2)**
 
 ## **What is Availy?**
 
